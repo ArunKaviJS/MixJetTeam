@@ -112,27 +112,18 @@ Produce TWO tables with this structure:
 IMPORTANT: If a flight number has multiple countries/permits, create separate rows.
 
 {
-    "Flight Sectors & Permit Requirements": {
+    "Flight Sectors": {
         "fieldType": "table",
         "items": [
             {
-                "Departure": "<Origin ICAO full form(Abbreviation)>",
-                "Destination": "<Destination ICAO full form(Abbreviation)>",
-                "Flight No": "<Flight Number>",
-                "Departure UTC Date & Time": "<Parsed DateTime>",
-                "Local Date & Time": "<Optional>",
-                "Flight Time": "<Optional>",
-                "Arrival UTC Date & Time": "<Parsed DateTime>",
-                "Local Date & Time Arrival": "<Optional>",
-                "Load": "<EMPTY FERRY / LOADED>",
-                "Payload (kg)": "<If present>",
-                "Offload": "<If present>",
-                "Actual Payload": "<If present>",
-                "Number of PAX": "<If present>",
-                "Crew Count": "<If present>",
-                "permit Country": "<Permit Country>",
-                "Permit Type": "<Permit Type>"
-            }
+            "Date": "<Parsed Date or DateTime>",
+            "Flight": "<Flight Number>",
+            "Departure": "<Origin ICAO full form (Abbreviation)>",
+            "From": "<Departure UTC Date & Time>",
+            "Arrival": "<Destination ICAO full form (Abbreviation)>",
+            "To": "<Arrival UTC Date & Time>",
+            "Load": "<EMPTY FERRY / LOADED>"
+        }
         ]
     },
 
