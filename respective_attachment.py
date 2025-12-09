@@ -1,0 +1,148 @@
+import imaplib
+import email
+from email.header import decode_header
+import os
+from dotenv import load_dotenv
+from azure_llm_agent import extract_structured_email_data
+from gmailmongo import store_structured_in_mongo
+
+load_dotenv()
+
+IMAP_SERVER = os.getenv("IMAP_SERVER")
+EMAIL_USER = os.getenv("EMAIL_USER")
+EMAIL_PASS = os.getenv("EMAIL_PASS")
+
+os.makedirs("attachments", exist_ok=True)
+
+def decode_text(raw):
+    if raw is None:
+        return ""
+    text, enc = decode_header(raw)[0]
+    if isinstance(text, bytes):
+        return text.decode(enc or "utf-8", errors="ignore")
+    return text
+
+def get_email_body_and_attachments(msg):
+    body = ""
+    attachments = []
+
+    if msg.is_multipart():
+        for part in msg.walk():
+            content_type = part.get_content_type()
+
+            # Extract body
+            if content_type == "text/plain":
+                try:
+                    body = part.get_payload(decode=True).decode(errors="ignore")
+                except:
+                    pass
+
+            # Extract attachments
+            if part.get("Content-Disposition"):
+                filename = part.get_filename()
+                if filename:
+                    filename = decode_text(filename)
+                    file_path = os.path.join("attachments", filename)
+
+                    with open(file_path, "wb") as f:
+                        f.write(part.get_payload(decode=True))
+
+                    attachments.append(file_path)
+    else:
+        body = msg.get_payload(decode=True).decode(errors="ignore")
+
+    return body, attachments
+
+def fetch_unread_Approlabs_emails():
+    mail = imaplib.IMAP4_SSL(IMAP_SERVER)
+    mail.login(EMAIL_USER, EMAIL_PASS)
+    mail.select("inbox")
+
+    print("Fetching unread emails containing: Email Content...\n")
+
+    status, messages = mail.search(None, "(UNSEEN)")
+    email_ids = messages[0].split()
+
+    result_output = ""
+
+    for email_id in email_ids:
+        status, msg_data = mail.fetch(email_id, "(RFC822)")
+        raw_email = msg_data[0][1]
+        msg = email.message_from_bytes(raw_email)
+
+        from_email = msg.get("From")
+        subject = decode_text(msg.get("Subject")).strip()
+
+        # ⭐ Check if subject *contains* the phrase "Email Content"
+        if "email content" not in subject.lower():
+            continue
+
+        body, attachments = get_email_body_and_attachments(msg)
+
+        # mark as read
+        mail.store(email_id, "+FLAGS", "\\Seen")
+
+        block = f"""
+📩 --- NEW EMAIL RECEIVED ---
+From: {from_email}
+Subject: {subject}
+Message:
+{body}
+
+Attachments:
+{attachments}
+----------------------------------------
+"""
+        result_output += block
+
+    return result_output
+
+
+def extract_message_content(full_output: str) -> str:
+    """
+    Extracts only the message body between 'Message:' and 'Attachments:' 
+    from the email fetch output.
+    """
+    # Normalize line endings
+    text = full_output.replace("\r", "")
+
+    # Look for start and end markers
+    start_marker = "Message:"
+    end_marker = "Attachments:"
+
+    # Find positions
+    start_idx = text.find(start_marker)
+    if start_idx == -1:
+        return ""  # Message not found
+    
+    # Move index to after 'Message:'
+    start_idx += len(start_marker)
+
+    end_idx = text.find(end_marker, start_idx)
+    if end_idx == -1:
+        # If no attachment block, take text till end
+        message_content = text[start_idx:].strip()
+    else:
+        message_content = text[start_idx:end_idx].strip()
+
+    return message_content
+
+
+# Run the filter function
+output = fetch_unread_Approlabs_emails()
+print("fetched")
+print(output)
+
+
+message_content=extract_message_content(output)
+
+print('**MEssage*')
+print(message_content)
+
+
+structured = extract_structured_email_data(message_content)
+print("LLM Output")
+print(structured)
+
+id = store_structured_in_mongo(structured)
+print("Stored with ID:", id)
