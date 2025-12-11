@@ -8,7 +8,16 @@ from gmailmongo import store_structured_in_mongo
 from texttopdf import string_to_pdf_unique_and_upload
 import time
 
+
 load_dotenv()
+
+
+# === Global Variables ===
+
+EMAIL_BODY = ""
+
+EMAIL_ATTACHMENTS = []
+
 
 IMAP_SERVER = os.getenv("IMAP_SERVER")
 EMAIL_USER = os.getenv("EMAIL_USER")
@@ -60,6 +69,11 @@ def get_email_body_and_attachments(msg):
     return body, attachments
 
 def fetch_unread_Approlabs_emails():
+    
+    global EMAIL_BODY
+
+    global EMAIL_ATTACHMENTS
+    
     mail = imaplib.IMAP4_SSL(IMAP_SERVER)
     mail.login(EMAIL_USER, EMAIL_PASS)
     mail.select("inbox")
@@ -84,6 +98,12 @@ def fetch_unread_Approlabs_emails():
             continue
 
         body, attachments = get_email_body_and_attachments(msg)
+        
+        # Store them globally
+
+        EMAIL_BODY = body
+
+        EMAIL_ATTACHMENTS = attachments
 
         # mark as read
         mail.store(email_id, "+FLAGS", "\\Seen")
@@ -156,14 +176,16 @@ def live_email_listener():
 
             # Upload PDF
             result = string_to_pdf_unique_and_upload(
-                text=output,
-                folder_path="gmail_pdfs/",
-                bucket_name="yc-retails-invoice",
-                s3_folder="uploads/",
-                aws_access_key=AWS_ACCESS_KEY,
-                aws_secret_key=AWS_SECRET_KEY,
-                aws_region="ap-south-1"
-            )
+            text=output,
+            attachments=EMAIL_ATTACHMENTS,     # << NEW
+            folder_path="gmail_pdfs/",
+            bucket_name="yc-retails-invoice",
+            s3_folder="uploads/",
+            aws_access_key=AWS_ACCESS_KEY,
+            aws_secret_key=AWS_SECRET_KEY,
+            aws_region="ap-south-1"
+        )
+
             
             local_path = result["local_pdf_path"]
             bucket = result["s3_bucket"]

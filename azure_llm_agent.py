@@ -47,21 +47,21 @@ You must map raw text to ONLY the following permitted values:
 
 
 
-- "OVF" → Overflight 
+- "OVF" → Overflight Permit
 
-- "OV" → Overflight 
+- "OV" → Overflight Permit
 
-- "OVERFLIGHT" → Overflight 
+- "OVERFLIGHT" → Overflight Permit
 
-- "FIR" (Ethiopia FIR, South Sudan FIR, etc.) → Overflight 
+- "FIR" (Ethiopia FIR, South Sudan FIR, etc.) → Overflight Permit
 
-- "Landing" / "LDG" / "LNDG" / "Arrival" → Landing 
+- "Landing" / "LDG" / "LNDG" / "Arrival" → Landing Permit
 
-- "Tech Stop" / "Technical Stop" / "Fuel Stop"/TECH → Technical Stop 
+- "Tech Stop" / "Technical Stop" / "Fuel Stop"/TECH → Technical Stop Permit
 
-- "Special" / "Non-standard" → Special Flight 
+- "Special" / "Non-standard" → Special Flight Permit
 
-- "DG" -> "Dangerous Goods"
+- "DG" -> "Dangerous Goods Permit"
 
 - "TFC" → "Traffic Rights Permit"
 
