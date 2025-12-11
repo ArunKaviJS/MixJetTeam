@@ -57,10 +57,15 @@ You must map raw text to ONLY the following permitted values:
 
 - "Landing" / "LDG" / "LNDG" / "Arrival" → Landing 
 
-- "Tech Stop" / "Technical Stop" / "Fuel Stop" → Technical Stop 
+- "Tech Stop" / "Technical Stop" / "Fuel Stop"/TECH → Technical Stop 
 
 - "Special" / "Non-standard" → Special Flight 
 
+- "DG" -> "Dangerous Goods"
+
+- "TFC" → "Traffic Rights Permit"
+
+- "TLP" → "Technical Landing Permit"
 
 
 ❗ NEVER output values like:
@@ -90,7 +95,19 @@ You ALWAYS:
 
 - ensure tables contain **every row**, even if repeated flight numbers exist
 
+### IMPORTANT — MULTI-PERMIT LINES & SPLITTING RULES
 
+Many lines list multiple permits for the same sector/country (for example:
+"Türkiye TFC" on one line and "Türkiye DG Approval" on the next, or
+"Jordan OVF, Jordan Landing" on a single line). **You MUST** treat each permit occurrence as a separate permit row.
+
+Rules:
+- If multiple permit tokens appear for the same country (on one line or across adjacent lines), produce **one table row per permit token** — do not merge tokens into a single row.
+- Split permit lists on common separators: comma `,`, semicolon `;`, slash `/`, vertical bar `|`, the words `and`, `&`, `+`, and on newlines.
+- Trim and normalize each token before mapping to the normalized Permit Type list below.
+- Map phrases that include the word **Approval** or **Approval for** (e.g., `DG Approval`, `DG Approval required`) to the canonical value for the permit token (`DG` → `Dangerous Goods`).
+- If the same country appears twice with different tokens (e.g., `Türkiye TFC` and `Türkiye DG Approval`), output two separate rows both using the same Sector and Flight No, with Permit Types `Traffic Rights Permit` and `Dangerous Goods` respectively.
+- Always preserve the original Sector and Flight No fields on every generated row.
 -----------------------------------------------------
 ### PART A — FORMS OUTPUT (Key → Value mapping)
 Return this structure:
@@ -112,22 +129,22 @@ Produce TWO tables with this structure:
 IMPORTANT: If a flight number has multiple countries/permits, create separate rows.
 
 {
-    "Flight Sectors": {
+    "Flight Schedule": {
         "fieldType": "table",
         "items": [
             {
             "Date": "<Parsed Date or DateTime>",
             "Flight": "<Flight Number>",
-            "Departure": "<Origin ICAO full form (Abbreviation)>",
-            "From": "<Departure UTC Date & Time>",
-            "Arrival": "<Destination ICAO full form (Abbreviation)>",
-            "To": "<Arrival UTC Date & Time>",
-            "Load": "<EMPTY FERRY / LOADED>"
+            "Departure": "<Departure UTC Date & Time>",
+            "From": "<Origin ICAO full form (Abbreviation)>",
+            "Arrival": "<Arrival UTC Date & Time>,
+            "To": "<Destination ICAO full form (Abbreviation)>",
+            "Load": "<Extract the load exactly as written in the email content (no assumptions, no fixed words, no normalization)>
         }
         ]
     },
 
-    "Flight Schedule": {
+    "Flight Sectors": {
         "fieldType": "table",
         "items": [
             {

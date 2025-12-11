@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 import json
 from bson import ObjectId
+from datetime import datetime,timezone
 
 # Load environment variables
 load_dotenv()
@@ -81,7 +82,7 @@ def normalize_structured_data(structured, full_text=""):
 # -------------------------------------------------------
 # MONGO STORE FUNCTION
 # -------------------------------------------------------
-def store_structured_in_mongo(structured, email_text=""):
+def store_structured_in_mongo(structured,object_url,filename,originalS3File,email_text=""):
     """Store normalized structured data into MongoDB with unique ID."""
 
     normalized_structured, cleaned_text = normalize_structured_data(
@@ -93,9 +94,19 @@ def store_structured_in_mongo(structured, email_text=""):
     collection = db[FILE_DETAILS]
 
     doc = {
-        "_id": ObjectId(),              # create unique ID
-        "structured": normalized_structured,  # REAL nested object
-        "email_text": cleaned_text
+        "_id": ObjectId(), # create unique ID
+        "clusterId":ObjectId("693901f09d8dbf36a427bd91"),
+        "userId":ObjectId("6938fd609d8dbf36a427bd6d"),
+        "status":"1",
+        "fileName":filename ,
+        "processingStatus":"Completed" ,
+        "originalS3File":originalS3File,
+        "originalFile":object_url ,
+        "extractedValues": normalized_structured,  # REAL nested object
+        "updatedExtractedValues":normalized_structured,
+        "credits":"null",
+        "createdAt":datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+        
     }
 
     collection.insert_one(doc)

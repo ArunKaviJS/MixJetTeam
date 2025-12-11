@@ -5,12 +5,18 @@ import os
 from dotenv import load_dotenv
 from azure_llm_agent import extract_structured_email_data
 from gmailmongo import store_structured_in_mongo
+from texttopdf import string_to_pdf_unique_and_upload
+import time
 
 load_dotenv()
 
 IMAP_SERVER = os.getenv("IMAP_SERVER")
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASS = os.getenv("EMAIL_PASS")
+
+AWS_ACCESS_KEY=os.getenv("AWS_ACCESS_KEY")
+AWS_SECRET_KEY=os.getenv("AWS_SECRET_KEY")
+REGION=os.getenv("REGION")
 
 os.makedirs("attachments", exist_ok=True)
 
@@ -58,7 +64,7 @@ def fetch_unread_Approlabs_emails():
     mail.login(EMAIL_USER, EMAIL_PASS)
     mail.select("inbox")
 
-    print("Fetching unread emails containing: Email Content...\n")
+    print("Fetching unread emails containing: Permit Request...\n")
 
     status, messages = mail.search(None, "(UNSEEN)")
     email_ids = messages[0].split()
@@ -74,7 +80,7 @@ def fetch_unread_Approlabs_emails():
         subject = decode_text(msg.get("Subject")).strip()
 
         # ⭐ Check if subject *contains* the phrase "Email Content"
-        if "email content" not in subject.lower():
+        if "permit request" not in subject.lower():
             continue
 
         body, attachments = get_email_body_and_attachments(msg)
@@ -83,7 +89,7 @@ def fetch_unread_Approlabs_emails():
         mail.store(email_id, "+FLAGS", "\\Seen")
 
         block = f"""
-📩 --- NEW EMAIL RECEIVED ---
+
 From: {from_email}
 Subject: {subject}
 Message:
@@ -128,21 +134,59 @@ def extract_message_content(full_output: str) -> str:
     return message_content
 
 
-# Run the filter function
-output = fetch_unread_Approlabs_emails()
-print("fetched")
-print(output)
+def live_email_listener():
+    print("\n🔄 Live Email Listener Started... Waiting for new mails...\n")
+
+    while True:
+        try:
+            output = fetch_unread_Approlabs_emails()
+
+            # If empty → no new Approlabs emails, continue waiting
+            if not output.strip():
+                time.sleep(5)
+                continue
+
+            print("\n📥 NEW EMAIL(S) RECEIVED:\n")
+            print(output)
+
+            # Extract only the message part
+            message_content = extract_message_content(output)
+            print("📄 Extracted Message:")
+            print(message_content)
+
+            # Upload PDF
+            result = string_to_pdf_unique_and_upload(
+                text=output,
+                folder_path="gmail_pdfs/",
+                bucket_name="yc-retails-invoice",
+                s3_folder="uploads/",
+                aws_access_key=AWS_ACCESS_KEY,
+                aws_secret_key=AWS_SECRET_KEY,
+                aws_region="ap-south-1"
+            )
+            
+            local_path = result["local_pdf_path"]
+            bucket = result["s3_bucket"]
+            s3_key = result["s3_key"]
+            object_url = result["object_url"]
+            filename = result["filename"]
+            message = result["message"]
+
+            # LLM Processing
+            structured = extract_structured_email_data(message_content)
+            print("🤖 LLM Output:")
+            print(structured)
+
+            # MongoDB Store
+            id = store_structured_in_mongo(structured,object_url,filename,s3_key)
+            print("💾 Stored with ID:", id)
+
+        except Exception as e:
+            print(f"❌ Error: {e}")
+
+        # Check inbox every 5 seconds
+        time.sleep(5)
 
 
-message_content=extract_message_content(output)
-
-print('**MEssage*')
-print(message_content)
-
-
-structured = extract_structured_email_data(message_content)
-print("LLM Output")
-print(structured)
-
-id = store_structured_in_mongo(structured)
-print("Stored with ID:", id)
+if __name__ == "__main__":
+    live_email_listener()
