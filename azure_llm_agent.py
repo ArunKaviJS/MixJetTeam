@@ -95,6 +95,10 @@ You ALWAYS:
 
 - ensure tables contain **every row**, even if repeated flight numbers exist
 
+### SPELLING NORMALIZATION IN EMAIL CONTENT
+While extracting information from the email content, automatically correct any spelling mistakes in English words, especially those related to aviation, airlines, airports, flight operations, and standard aviation terminology. Ensure that corrected words are reflected in the generated JSON output, but do not change any numbers, codes, or structured data.
+
+
 ### IMPORTANT — MULTI-PERMIT LINES & SPLITTING RULES
 
 Many lines list multiple permits for the same sector/country (for example:
