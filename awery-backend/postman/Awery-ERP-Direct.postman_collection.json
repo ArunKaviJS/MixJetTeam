@@ -1,0 +1,90 @@
+{
+  "info": {
+    "name": "Awery ERP · Direct jRPC",
+    "description": "Calls Awery API v2 directly. Single endpoint {{url}}/rpc/json/. Auth: Authorization: Bearer {{token}}. Only the methods MixJet needs now — no update/delete.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "url", "value": "https://mixjetdev.awery.com" },
+    { "key": "token", "value": "PUT-REAL-TOKEN-HERE" },
+    { "key": "sample_flight_no", "value": "MIX22985" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "getFlight  (existing flight_no)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{url}}/rpc/json/",
+        "body": { "mode": "raw", "raw": "{\n  \"method\": \"getFlight\",\n  \"params\": [ { \"flight_no\": \"{{sample_flight_no}}\" } ]\n}" }
+      }
+    },
+    {
+      "name": "getFlight  (by flight_id)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{url}}/rpc/json/",
+        "body": { "mode": "raw", "raw": "{\n  \"method\": \"getFlight\",\n  \"params\": [ { \"flight_id\": 535083 } ]\n}" }
+      }
+    },
+    {
+      "name": "getFlights",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{url}}/rpc/json/",
+        "body": { "mode": "raw", "raw": "{\n  \"method\": \"getFlights\",\n  \"params\": [ { \"flight_no\": \"{{sample_flight_no}}\" } ]\n}" }
+      }
+    },
+    {
+      "name": "getFlightList",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{url}}/rpc/json/",
+        "body": { "mode": "raw", "raw": "{\n  \"method\": \"getFlightList\",\n  \"params\": [ { \"from_date\": \"2024-05-01\", \"to_date\": \"2024-07-31\", \"date_type\": \"departure_date\" } ]\n}" }
+      }
+    },
+    {
+      "name": "getCustomer  (by id)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{url}}/rpc/json/",
+        "body": { "mode": "raw", "raw": "{\n  \"method\": \"getCustomer\",\n  \"params\": [ { \"id\": 64710 } ]\n}" }
+      }
+    },
+    {
+      "name": "createCustomer",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{url}}/rpc/json/",
+        "body": { "mode": "raw", "raw": "{\n  \"method\": \"createCustomer\",\n  \"params\": [ {\n    \"customer\": {\n      \"customer_name\": \"MIXJET API TEST CUSTOMER\",\n      \"company__name\": \"Awery Demo Company\",\n      \"auto_customer_code\": true\n    }\n  } ]\n}" }
+      }
+    },
+    {
+      "name": "createFlight",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{url}}/rpc/json/",
+        "body": { "mode": "raw", "raw": "{\n  \"method\": \"createFlight\",\n  \"params\": [ {\n    \"flight\": {\n      \"status\": \"planned\",\n      \"customer__name\": \"Air Logistics Partners FZE\",\n      \"operator__name\": \"Air Logistics Partners FZE\",\n      \"aircraft__name\": \"TC-MAA\",\n      \"actype__name\": \"A330-200F\",\n      \"flight_no\": \"MIXJETAPITEST01\",\n      \"purpose__name\": \"Cargo\",\n      \"flight_type\": \"cargo\",\n      \"company__name\": \"Awery Demo Company\",\n      \"payload_unit\": \"kg\"\n    },\n    \"waypoints\": [\n      { \"prior\": 1, \"call_sign\": \"AZX7314\", \"actual_origin__name\": \"VOMM\", \"planned_departure_date\": \"2024-05-03 01:00:00\" },\n      { \"prior\": 2, \"call_sign\": \"AZX7314\", \"call_sign_landing\": \"AZX7314\", \"actual_origin__name\": \"OMDB\", \"planned_arrival_date\": \"2024-05-03 04:30:00\" }\n    ],\n    \"unique\": [0]\n  } ]\n}" }
+      }
+    },
+    {
+      "name": "insertFlights",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{url}}/rpc/json/",
+        "body": { "mode": "raw", "raw": "{\n  \"method\": \"insertFlights\",\n  \"params\": [ {\n    \"flight\": {\n      \"status\": \"planned\",\n      \"customer__name\": \"Air Logistics Partners FZE\",\n      \"aircraft__name\": \"TC-MAA\",\n      \"actype__name\": \"A330-200F\",\n      \"flight_no\": \"MIXJETAPITEST02\",\n      \"company__name\": \"Awery Demo Company\",\n      \"flight_type\": \"cargo\",\n      \"payload_unit\": \"kg\"\n    },\n    \"waypoints\": [\n      { \"prior\": 1, \"call_sign\": \"AZX7314\", \"actual_origin__name\": \"VOMM\", \"planned_departure_date\": \"2024-05-03 01:00:00\" },\n      { \"prior\": 2, \"call_sign\": \"AZX7314\", \"call_sign_landing\": \"AZX7314\", \"actual_origin__name\": \"OMDB\", \"planned_arrival_date\": \"2024-05-03 04:30:00\" }\n    ],\n    \"unique\": [0]\n  } ]\n}" }
+      }
+    }
+  ]
+}

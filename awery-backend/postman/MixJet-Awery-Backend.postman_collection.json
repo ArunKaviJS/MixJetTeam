@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "MixJet · Awery Backend",
+    "description": "Local FastAPI backend that bridges the AI extraction to Awery ERP. No update/delete methods.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8200" },
+    { "key": "sample_flight_no", "value": "MIX22985" }
+  ],
+  "item": [
+    {
+      "name": "health",
+      "request": { "method": "GET", "url": "{{base_url}}/health" }
+    },
+    {
+      "name": "getFlight  (GET check — existing flight_no)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/awery/flight?flight_no={{sample_flight_no}}",
+          "host": ["{{base_url}}"],
+          "path": ["awery", "flight"],
+          "query": [{ "key": "flight_no", "value": "{{sample_flight_no}}" }]
+        }
+      }
+    },
+    {
+      "name": "getFlight  (GET check — by flight_id)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/awery/flight?flight_id=535083",
+          "host": ["{{base_url}}"],
+          "path": ["awery", "flight"],
+          "query": [{ "key": "flight_id", "value": "535083" }]
+        }
+      }
+    },
+    {
+      "name": "getFlightList  (GET check)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/awery/flight-list?from_date=2024-05-01&to_date=2024-07-31&date_type=departure_date",
+          "host": ["{{base_url}}"],
+          "path": ["awery", "flight-list"],
+          "query": [
+            { "key": "from_date", "value": "2024-05-01" },
+            { "key": "to_date", "value": "2024-07-31" },
+            { "key": "date_type", "value": "departure_date" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "getFlights  (GET check)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/awery/flights?flight_no={{sample_flight_no}}",
+          "host": ["{{base_url}}"],
+          "path": ["awery", "flights"],
+          "query": [{ "key": "flight_no", "value": "{{sample_flight_no}}" }]
+        }
+      }
+    },
+    {
+      "name": "getCustomer  (GET check)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/awery/customer?id=64710",
+          "host": ["{{base_url}}"],
+          "path": ["awery", "customer"],
+          "query": [{ "key": "id", "value": "64710" }]
+        }
+      }
+    },
+    {
+      "name": "process  (dry_run — build payload only)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/awery/process",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dry_run\": true,\n  \"company_name\": \"Awery Demo Company\",\n  \"unique\": [0],\n  \"extracted\": {\n    \"Customer\": \"Air Logistics Partners FZE\",\n    \"Operator\": null,\n    \"Flight Type\": \"Cargo\",\n    \"Purposes\": \"Hazardous materials transport mission\",\n    \"Reg No\": \"TC-MAA\",\n    \"ACFT Type\": \"A330-200F\",\n    \"Bulk Reg No\": \"TC-MAB, TC-MAC\",\n    \"Flight Schedule\": {\n      \"fieldType\": \"table\",\n      \"items\": [\n        { \"Date\": \"03MAY24\", \"Flight\": \"AZX7314\", \"Departure\": \"2024-05-03 01:00\", \"From\": \"Chennai International Airport (VOMM)\", \"Arrival\": \"2024-05-03 04:30\", \"To\": \"Dubai International Airport (OMDB)\", \"Load\": \"EMPTY FERRY/TECHSTOP\" },\n        { \"Date\": \"04MAY24\", \"Flight\": \"AZX7315\", \"Departure\": \"2024-05-04 03:00\", \"From\": \"Dubai International Airport (OMDB)\", \"Arrival\": \"2024-05-04 08:15\", \"To\": \"Istanbul Airport (LTFM)\", \"Load\": \"LOADED/MAINTENANCE SUPPLIES\" }\n      ]\n    },\n    \"Flight Sectors\": {\n      \"fieldType\": \"table\",\n      \"items\": [\n        { \"Sector\": \"VOMM - OMDB\", \"Flight No.\": \"AZX7314\", \"Country\": \"India\", \"Permit Type\": \"Dangerous Goods Permit\" }\n      ]\n    }\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "process  (LIVE — createFlight in Awery)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/awery/process",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dry_run\": false,\n  \"create_customer\": false,\n  \"company_name\": \"Awery Demo Company\",\n  \"unique\": [0],\n  \"extracted\": {\n    \"Customer\": \"Air Logistics Partners FZE\",\n    \"Flight Type\": \"Cargo\",\n    \"Purposes\": \"Hazardous materials transport mission\",\n    \"Reg No\": \"TC-MAA\",\n    \"ACFT Type\": \"A330-200F\",\n    \"Flight Schedule\": {\n      \"fieldType\": \"table\",\n      \"items\": [\n        { \"Flight\": \"AZX7314\", \"Departure\": \"2024-05-03 01:00\", \"From\": \"(VOMM)\", \"Arrival\": \"2024-05-03 04:30\", \"To\": \"(OMDB)\" }\n      ]\n    }\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "rpc passthrough  (allowed methods only)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/awery/rpc",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"method\": \"getFlight\",\n  \"params\": { \"flight_no\": \"{{sample_flight_no}}\" }\n}"
+        }
+      }
+    }
+  ]
+}

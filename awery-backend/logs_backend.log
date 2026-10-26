@@ -1,0 +1,42 @@
+INFO:     Started server process [24712]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8200 (Press CTRL+C to quit)
+INFO:     127.0.0.1:59862 - "GET /health HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /health HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=1 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 400 Bad Request
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 400 Bad Request
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 400 Bad Request
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 400 Bad Request
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 400 Bad Request
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 400 Bad Request
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 400 Bad Request
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 400 Bad Request
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files?page=1&page_size=10 HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files/6aa129d6987e02f0d0d4ad3e HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "OPTIONS /files/6aa129d6987e02f0d0d4ad3e HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files/6aa129d6987e02f0d0d4ad3e HTTP/1.1" 200 OK
+INFO:     106.51.233.18:0 - "GET /files/6aa129d6987e02f0d0d4ad3e HTTP/1.1" 200 OK

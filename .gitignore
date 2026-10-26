@@ -1,3 +1,7 @@
 .env
 __pycache__
 venv
+gmail_pdfs/
+attachments/
+node_modules/
+dist/
